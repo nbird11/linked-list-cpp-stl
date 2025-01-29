@@ -103,7 +103,7 @@ inline void assign(Node <T>*& pDestination, const Node <T>* pSource)
       pSrc = pSrc->pNext;
    }
    
-   // src is longer than the dest
+   // Src is longer than the dest
    if (pSrc)
    {
       pDes = pDesPrevious;
@@ -118,22 +118,27 @@ inline void assign(Node <T>*& pDestination, const Node <T>* pSource)
          pSrc = pSrc->pNext;
       }
    }
-
-   // dest is longer than the src
-   else if (!pSrc && pDes)
+   // Dest is longer than the src
+   else if (pDes)
    {
-      bool setToNull = false;
-
-      // 
-      if (pDes->pPrev)
-         pDes->pPrev->pNext = nullptr;
+      // If we have a previous node, update its next pointer
+      if (pDesPrevious)
+      {
+         pDesPrevious->pNext = nullptr;
+      }
+      // If we don't have a previous node, we're deleting from the start
       else
-         setToNull = true;
-
-      delete pDes;
-
-      if (setToNull)
+      {
          pDestination = nullptr;
+      }
+
+      // Delete pDes and all nodes after it
+      while (pDes)
+      {
+         Node<T>* pDelete = pDes;
+         pDes = pDes->pNext;
+         delete pDelete;
+      }
    }
 }
 

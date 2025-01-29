@@ -35,7 +35,7 @@ public:
       // Assign
       test_assign_emptyToEmpty();
       test_assign_standardToEmpty();
-      //test_assign_emptyToStandard();  // TODO
+      test_assign_emptyToStandard();  // TODO
       test_assign_smallToBig();
       test_assign_bigToSmall();
       test_swap_emptyEmpty();
