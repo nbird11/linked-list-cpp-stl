@@ -17,6 +17,10 @@
 #include <cassert>
 #include <memory>
 
+// <DELETEME>
+#include <iostream>
+// </DELETEME>
+
 class TestNode : public UnitTest
 {
 public:
@@ -31,11 +35,22 @@ public:
       test_copy_nullptr();
       test_copy_one();
       test_copy_standard();
-      
+
       // Assign
       test_assign_emptyToEmpty();
       test_assign_standardToEmpty();
-      test_assign_emptyToStandard();  // TODO
+      test_assign_emptyToStandard();
+
+      auto deleteme = []() -> void
+         {
+            Node<Spy>* pHead = new Node<Spy>(Spy(11));
+            auto pCurr = insert(pHead, Spy(22), true);
+            pCurr = insert(pCurr, Spy(33), true);
+
+            std::cout << pHead << std::endl;
+         };
+      deleteme();
+
       test_assign_smallToBig();
       test_assign_bigToSmall();
       test_swap_emptyEmpty();
@@ -66,14 +81,14 @@ public:
       test_size_empty();
       test_size_standard();
       test_size_standardMiddle();
-      
+
       report("Node");
    }
-   
+
    /***************************************
     * CONSTRUCTOR
     ***************************************/
-   
+
    // default constructor
    void test_create_default()
    {  // setup
@@ -94,7 +109,7 @@ public:
       assertUnit(Spy::numCopyMove() == 0);
       assertEmptyFixture(&n);
    }  // teardown
-   
+
    // non-default constructor that initializes with a value.
    void test_create_value()
    {  // setup
@@ -121,7 +136,7 @@ public:
       n.data = Spy();
       assertEmptyFixture(&n);
    }  // teardown
-   
+
    // non-default move constructor that initializes with a value.
    void test_create_move()
    {  // setup
@@ -135,8 +150,8 @@ public:
       // exercise
       alloc.construct(&n, std::move(s)); // the constructor is called explicitly
       // verify
-      assertUnit(Spy::numCopy() == 0);       
-      assertUnit(Spy::numAlloc() == 0);      
+      assertUnit(Spy::numCopy() == 0);
+      assertUnit(Spy::numAlloc() == 0);
       assertUnit(Spy::numDelete() == 0);
       assertUnit(Spy::numDefault() == 0);
       assertUnit(Spy::numNondefault() == 0);
@@ -152,7 +167,7 @@ public:
    /***************************************
     * COPY
     ***************************************/
-   
+
    // copy with a nullptr pointer
    void test_copy_nullptr()
    {  // setup
@@ -162,12 +177,12 @@ public:
       // exercise
       pDes = copy(pSrc);
       // verify
-      assertUnit(Spy::numDefault() == 0);      
+      assertUnit(Spy::numDefault() == 0);
       assertUnit(Spy::numAlloc() == 0);
       assertUnit(Spy::numDelete() == 0);
       assertUnit(Spy::numNondefault() == 0);
       assertUnit(Spy::numCopy() == 0);
-      assertUnit(Spy::numCopyMove() == 0);      
+      assertUnit(Spy::numCopyMove() == 0);
       assertUnit(pDes == nullptr);
       assertUnit(pSrc == nullptr);
    }  // teardown
@@ -217,7 +232,7 @@ public:
       teardownStandardFixture(pSrc);
       teardownStandardFixture(pDes);
    }
-   
+
    // copy the standard fixture: three nodes.
    void test_copy_standard()
    {  // setup
@@ -239,8 +254,8 @@ public:
       assertUnit(Spy::numNondefault() == 0);
       assertUnit(Spy::numCopyMove() == 0);
       assertUnit(p11 != pDes);
-      if(pDes)
-      { 
+      if (pDes)
+      {
          assertUnit(p26 != pDes->pNext);
          if (p31 && pDes->pNext)
             assertUnit(p31->pNext != pDes->pNext->pNext);
@@ -461,7 +476,7 @@ public:
       assertUnit(Spy::numCopy() == 1);        // copy-create [31]
       assertUnit(Spy::numAlloc() == 1);       // allocate [31]
       assertUnit(Spy::numDestructor() == 0);
-      assertUnit(Spy::numDelete() == 0);      
+      assertUnit(Spy::numDelete() == 0);
       assertUnit(Spy::numDefault() == 0);
       assertUnit(Spy::numNondefault() == 0);
       assertUnit(Spy::numCopyMove() == 0);
@@ -564,8 +579,8 @@ public:
       assertUnit(p11 == nullptr);
       // teardown
       teardownStandardFixture(pRHS);
-   } 
-   
+   }
+
    // swap two non-empty lists
    void test_swap_oneTwo()
    {  // setup
@@ -624,12 +639,12 @@ public:
       // teardown
       teardownStandardFixture(p67);
       teardownStandardFixture(p11);
-   } 
+   }
 
    /***************************************
     * REMOVE
     ***************************************/
-   
+
    // attempt to remove from a nullptr pointer
    void test_remove_nullptr()
    {  // setup
@@ -648,7 +663,7 @@ public:
       assertUnit(pHead == nullptr);
       assertUnit(pReturn == nullptr);
    }  // teardown
-   
+
    // attempt to remove from the front of the standard fixture
    void test_remove_front()
    {  // setup
@@ -680,7 +695,7 @@ public:
       assertUnit(pReturn == p26);
       assertUnit(nullptr != p26);
       if (p26)
-      { 
+      {
          assertUnit(p26->data == Spy(26));
          assertUnit(p26->pNext == p31);
          assertUnit(p26->pPrev == nullptr);
@@ -695,7 +710,7 @@ public:
       // teardown
       teardownStandardFixture(p26);
    }
-   
+
    // remove from the back of the standard fixture
    void test_remove_back()
    {  // setup
@@ -791,11 +806,11 @@ public:
       // teardown
       teardownStandardFixture(p11);
    }
-   
+
    /***************************************
     * INSERT
     ***************************************/
-   
+
    // insert into an empty linked list with the before option set
    void test_insert_emptyBefore()
    {  // setup
@@ -809,7 +824,7 @@ public:
       assertUnit(Spy::numCopy() == 1);          // copy-create [99]
       assertUnit(Spy::numAlloc() == 1);         // allocate [99]
       assertUnit(Spy::numDestructor() == 0);
-      assertUnit(Spy::numDelete() == 0);      
+      assertUnit(Spy::numDelete() == 0);
       assertUnit(Spy::numDefault() == 0);
       assertUnit(Spy::numNondefault() == 0);
       assertUnit(Spy::numCopyMove() == 0);
@@ -925,7 +940,7 @@ public:
       delete p26;
       delete p31;
    }
-   
+
    // insert into the front of the standard fixture with the before option set
    void test_insert_frontAfter()
    {  // setup
@@ -1118,7 +1133,7 @@ public:
       delete p26;
       delete p31;
    }
-   
+
    // insert into the middle of the standard fixture with the before option set
    void test_insert_middleBefore()
    {  // setup
@@ -1182,7 +1197,7 @@ public:
       delete p26;
       delete p31;
    }
-   
+
    // insert into the middle of the standard fixture with the after option set
    void test_insert_middleAfter()
    {  // setup
@@ -1232,7 +1247,7 @@ public:
          assertUnit(pReturn->pPrev == p26);
          assertUnit(pReturn->pNext == p31);
       }
-      
+
       assertUnit(p31 != nullptr);
       if (p31)
       {
@@ -1246,7 +1261,7 @@ public:
       delete p26;
       delete p31;
    }
-  
+
    /***************************************
     * FIND
     ***************************************/
@@ -1262,7 +1277,7 @@ public:
       // verify
       assertUnit(Spy::numEquals() == 0);
       assertUnit(Spy::numLessthan() == 0);
-      assertUnit(Spy::numCopy() == 0); 
+      assertUnit(Spy::numCopy() == 0);
       assertUnit(Spy::numAlloc() == 0);
       assertUnit(Spy::numDestructor() == 0);
       assertUnit(Spy::numDelete() == 0);
@@ -1271,7 +1286,7 @@ public:
       assertUnit(Spy::numCopyMove() == 0);
       assertUnit(s == 0);
    }  // teardown
-   
+
    // attempt to find an element at the head of the standard fixture
    void test_size_standard()
    {  // setup
@@ -1323,7 +1338,7 @@ public:
       // exercise
       s = size(pHead);
       // verify
-      assertUnit(Spy::numEquals() == 0);  
+      assertUnit(Spy::numEquals() == 0);
       assertUnit(Spy::numLessthan() == 0);
       assertUnit(Spy::numCopy() == 0);
       assertUnit(Spy::numAlloc() == 0);
@@ -1342,11 +1357,11 @@ public:
       teardownStandardFixture(p11);
    }
 
-      
+
    /***************************************
     * FREE
     ***************************************/
-  
+
    // attempt to free an empty linked list
    void test_clear_nullptr()
    {  // setup
@@ -1364,7 +1379,7 @@ public:
       assertUnit(Spy::numCopyMove() == 0);
       assertUnit(pList == nullptr);
    }  // teardown
-   
+
    // attempt to free a linked list consisting of one node
    void test_clear_one()
    {  // setup
@@ -1499,7 +1514,7 @@ public:
 
       // Verify 11
       if (p)
-      { 
+      {
          assertIndirect(p->data == 11);
          assertIndirect(p->pPrev == nullptr);
          assertIndirect(p->pNext != nullptr);

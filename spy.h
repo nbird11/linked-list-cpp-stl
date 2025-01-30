@@ -206,3 +206,9 @@ inline void swap(Spy & s1, Spy & s2)
 {
    s1.swap(s2);
 }
+
+#include <iostream>
+inline std::ostream& operator<<(std::ostream& out, const Spy& s)
+{
+   return out << "Spy(" << *(s.p) << ")";
+}

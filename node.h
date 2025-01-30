@@ -14,7 +14,7 @@
  *        Node         : A class representing a Node
  *    Additionally, it will contain a few functions working on Node
  * Author
- *    <your names here>
+ *    Nathan Bird, Brock Hoskins
  ************************************************************************/
 
 #pragma once
@@ -48,7 +48,7 @@ public:
    // Member variables
    //
 
-   T data;                 // user data
+   T data;                // user data
    Node <T>* pNext;       // pointer to next node
    Node <T>* pPrev;       // pointer to previous node
 };
@@ -68,12 +68,12 @@ inline Node <T>* copy(const Node <T>* pSource)
       return nullptr;
 
    Node<T>* pDestination = new Node<T>(pSource->data);  // copy (not move)
-   const Node<T>* pSrc = pSource;
-   Node<T>* pDes = pDestination;
+   const Node<T>* pSrcCur = pSource;
+   Node<T>* pDesCur = pDestination;
 
-   for (; pSrc->pNext; pSrc = pSrc->pNext)
+   for (; pSrcCur->pNext; pSrcCur = pSrcCur->pNext)
    {
-      pDes = insert(pDes, pSrc->pNext->data, true /*after*/);
+      pDesCur = insert(pDesCur, pSrcCur->pNext->data, true /*after*/);
    }
 
    return pDestination;
@@ -90,36 +90,36 @@ inline Node <T>* copy(const Node <T>* pSource)
 template <class T>
 inline void assign(Node <T>*& pDestination, const Node <T>* pSource)
 {
-   const Node<T>* pSrc = pSource;
-   Node<T>* pDes = pDestination;
+   const Node<T>* pSrcCur = pSource;
+   Node<T>* pDesCur = pDestination;
    Node<T>* pDesPrevious = nullptr;
    
    // Move available src elements into available destination slots
-   while (pSrc && pDes)
+   while (pSrcCur && pDesCur)
    {
-      pDes->data = pSrc->data;
-      pDesPrevious = pDes;
-      pDes = pDes->pNext;
-      pSrc = pSrc->pNext;
+      pDesCur->data = pSrcCur->data;
+      pDesPrevious = pDesCur;
+      pDesCur = pDesCur->pNext;
+      pSrcCur = pSrcCur->pNext;
    }
    
    // Src is longer than the dest
-   if (pSrc)
+   if (pSrcCur)
    {
-      pDes = pDesPrevious;
+      pDesCur = pDesPrevious;
 
-      while (pSrc)
+      while (pSrcCur)
       {
-         pDes = insert(pDes, pSrc->data, true /*after*/);
+         pDesCur = insert(pDesCur, pSrcCur->data, true /*after*/);
          if (!pDestination)
          {
-            pDestination = pDes;
+            pDestination = pDesCur;
          }
-         pSrc = pSrc->pNext;
+         pSrcCur = pSrcCur->pNext;
       }
    }
    // Dest is longer than the src
-   else if (pDes)
+   else if (pDesCur)
    {
       // If we have a previous node, update its next pointer
       if (pDesPrevious)
@@ -132,11 +132,11 @@ inline void assign(Node <T>*& pDestination, const Node <T>* pSource)
          pDestination = nullptr;
       }
 
-      // Delete pDes and all nodes after it
-      while (pDes)
+      // Delete pDesCur and all nodes after it
+      while (pDesCur)
       {
-         Node<T>* pDelete = pDes;
-         pDes = pDes->pNext;
+         Node<T>* pDelete = pDesCur;
+         pDesCur = pDesCur->pNext;
          delete pDelete;
       }
    }
@@ -241,6 +241,11 @@ inline size_t size(const Node <T>* pHead)
 template <class T>
 inline std::ostream& operator << (std::ostream& out, const Node <T>* pHead)
 {
+   for (const Node<T>* p = pHead; p; p = p->pNext)
+   {
+      out << p->data;
+      if (p->pNext) out << " -> ";
+   }
    return out;
 }
 
