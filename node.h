@@ -49,8 +49,8 @@ public:
    //
 
    T data;                // user data
-   Node <T>* pNext;       // pointer to next node
-   Node <T>* pPrev;       // pointer to previous node
+   Node<T>* pNext;       // pointer to next node
+   Node<T>* pPrev;       // pointer to previous node
 };
 
 /***********************************************
@@ -62,7 +62,7 @@ public:
  *   COST   : O(n)
  **********************************************/
 template <class T>
-inline Node <T>* copy(const Node <T>* pSource)
+inline Node<T>* copy(const Node<T>* pSource)
 {
    if (pSource == nullptr)
       return nullptr;
@@ -88,12 +88,12 @@ inline Node <T>* copy(const Node <T>* pSource)
  *   COST   : O(n)
  **********************************************/
 template <class T>
-inline void assign(Node <T>*& pDestination, const Node <T>* pSource)
+inline void assign(Node<T>*& pDestination, const Node<T>* pSource)
 {
    const Node<T>* pSrcCur = pSource;
    Node<T>* pDesCur = pDestination;
    Node<T>* pDesPrevious = nullptr;
-   
+
    // Move available src elements into available destination slots
    while (pSrcCur && pDesCur)
    {
@@ -102,7 +102,7 @@ inline void assign(Node <T>*& pDestination, const Node <T>* pSource)
       pDesCur = pDesCur->pNext;
       pSrcCur = pSrcCur->pNext;
    }
-   
+
    // Src is longer than the dest
    if (pSrcCur)
    {
@@ -149,7 +149,7 @@ inline void assign(Node <T>*& pDestination, const Node <T>* pSource)
  *   COST   : O(1)
  **********************************************/
 template <class T>
-inline void swap(Node <T>*& pLHS, Node <T>*& pRHS)
+inline void swap(Node<T>*& pLHS, Node<T>*& pRHS)
 {
    std::swap(pLHS, pRHS);
 }
@@ -162,10 +162,30 @@ inline void swap(Node <T>*& pLHS, Node <T>*& pRHS)
  *   COST   : O(1)
  **********************************************/
 template <class T>
-inline Node <T>* remove(const Node <T>* pRemove)
+inline Node<T>* remove(const Node<T>* pRemove)
 {
+   Node<T>* pReturn = nullptr;
 
-   return new Node<T>;
+   if (!pRemove)
+      return pReturn;
+
+   // Connect neighboring nodes to each other.
+   if (pRemove->pPrev)
+      pRemove->pPrev->pNext = pRemove->pNext;
+   if (pRemove->pNext)
+      pRemove->pNext->pPrev = pRemove->pPrev;
+
+   // Return a node next to the removed node, prev over
+   //    next according to the pseudocode.
+   if (pRemove->pPrev)
+      pReturn = pRemove->pPrev;
+   else
+      pReturn = pRemove->pNext;
+
+   delete pRemove;
+   // pRemove is not referenced again, so no need to set it to nullptr.
+
+   return pReturn;
 }
 
 
@@ -181,9 +201,9 @@ inline Node <T>* remove(const Node <T>* pRemove)
  *   COST    : O(1)
  **********************************************/
 template <class T>
-inline Node <T>* insert(Node <T>* pCurrent,
-                        const T& t,
-                        bool after = false)
+inline Node<T>* insert(Node<T>* pCurrent,
+                       const T& t,
+                       bool after = false)
 {
    Node<T>* pNew = new Node<T>(t);
 
@@ -217,12 +237,11 @@ inline Node <T>* insert(Node <T>* pCurrent,
  * SIZE
  * Find the size an unsorted linked list.
  *  INPUT   : a pointer to the head of the linked list
- *            the value to be found
  *  OUTPUT  : number of nodes
  *  COST    : O(n)
  ********************************************************/
 template <class T>
-inline size_t size(const Node <T>* pHead)
+inline size_t size(const Node<T>* pHead)
 {
    size_t s = 0;
    for (const Node<T>* p = pHead; p; p = p->pNext)
@@ -239,7 +258,7 @@ inline size_t size(const Node <T>* pHead)
  *    COST   : O(n)
  **********************************************/
 template <class T>
-inline std::ostream& operator << (std::ostream& out, const Node <T>* pHead)
+inline std::ostream& operator << (std::ostream& out, const Node<T>* pHead)
 {
    for (const Node<T>* p = pHead; p; p = p->pNext)
    {
@@ -257,9 +276,14 @@ inline std::ostream& operator << (std::ostream& out, const Node <T>* pHead)
  *   COST    : O(n)
  ****************************************************/
 template <class T>
-inline void clear(Node <T>*& pHead)
+inline void clear(Node<T>*& pHead)
 {
-
+   while (pHead)
+   {
+      Node<T>* pDelete = pHead;
+      pHead = pHead->pNext;
+      delete pDelete;
+   }
 }
 
 

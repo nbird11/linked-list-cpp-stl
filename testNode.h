@@ -17,10 +17,6 @@
 #include <cassert>
 #include <memory>
 
-// <DELETEME>
-#include <iostream>
-// </DELETEME>
-
 class TestNode : public UnitTest
 {
 public:
@@ -40,17 +36,6 @@ public:
       test_assign_emptyToEmpty();
       test_assign_standardToEmpty();
       test_assign_emptyToStandard();
-
-      auto deleteme = []() -> void
-         {
-            Node<Spy>* pHead = new Node<Spy>(Spy(11));
-            auto pCurr = insert(pHead, Spy(22), true);
-            pCurr = insert(pCurr, Spy(33), true);
-
-            std::cout << pHead << std::endl;
-         };
-      deleteme();
-
       test_assign_smallToBig();
       test_assign_bigToSmall();
       test_swap_emptyEmpty();
@@ -69,13 +54,13 @@ public:
       test_insert_middleAfter();
 
       // Remove
-      //test_remove_nullptr();
-      //test_remove_front();
-      //test_remove_back();
-      //test_remove_middle();
-      //test_clear_nullptr();
-      //test_clear_one();
-      //test_clear_standard();
+      test_remove_nullptr();
+      test_remove_front();
+      test_remove_back();
+      test_remove_middle();
+      test_clear_nullptr();
+      test_clear_one();
+      test_clear_standard();
 
       // Status
       test_size_empty();
