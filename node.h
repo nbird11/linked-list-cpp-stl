@@ -36,10 +36,6 @@ public:
    //
    // Construct
    //
-   //
-   // Construct
-   //
-
    Node() : data(T()), pNext(nullptr), pPrev(nullptr) {}
    Node(const T& data) : data(data), pNext(nullptr), pPrev(nullptr) {}
    Node(T&& data) : data(std::move(data)), pNext(nullptr), pPrev(nullptr) {}
@@ -47,8 +43,7 @@ public:
    //
    // Member variables
    //
-
-   T data;                // user data
+   T data;               // user data
    Node<T>* pNext;       // pointer to next node
    Node<T>* pPrev;       // pointer to previous node
 };
@@ -64,7 +59,7 @@ public:
 template <class T>
 inline Node<T>* copy(const Node<T>* pSource)
 {
-   if (pSource == nullptr)
+   if (!pSource)
       return nullptr;
 
    Node<T>* pDestination = new Node<T>(pSource->data);  // copy (not move)
@@ -72,9 +67,7 @@ inline Node<T>* copy(const Node<T>* pSource)
    Node<T>* pDesCur = pDestination;
 
    for (; pSrcCur->pNext; pSrcCur = pSrcCur->pNext)
-   {
       pDesCur = insert(pDesCur, pSrcCur->pNext->data, true /*after*/);
-   }
 
    return pDestination;
 }
@@ -111,10 +104,9 @@ inline void assign(Node<T>*& pDestination, const Node<T>* pSource)
       while (pSrcCur)
       {
          pDesCur = insert(pDesCur, pSrcCur->data, true /*after*/);
+         // Make sure if pDestination is null that it is set to point to the head.
          if (!pDestination)
-         {
             pDestination = pDesCur;
-         }
          pSrcCur = pSrcCur->pNext;
       }
    }
@@ -123,22 +115,13 @@ inline void assign(Node<T>*& pDestination, const Node<T>* pSource)
    {
       // If we have a previous node, update its next pointer
       if (pDesPrevious)
-      {
          pDesPrevious->pNext = nullptr;
-      }
       // If we don't have a previous node, we're deleting from the start
       else
-      {
          pDestination = nullptr;
-      }
 
       // Delete pDesCur and all nodes after it
-      while (pDesCur)
-      {
-         Node<T>* pDelete = pDesCur;
-         pDesCur = pDesCur->pNext;
-         delete pDelete;
-      }
+      clear(pDesCur);
    }
 }
 
