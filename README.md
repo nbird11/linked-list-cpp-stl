@@ -1,82 +1,89 @@
-# C++ STL Stack Implementation
+# C++ Linked List Implementation
 
-This project implements a custom version of the C++ Standard Template Library (STL) stack container. The implementation provides exactly the same memory and performance characteristics as `std::stack`.
+This project implements a custom doubly-linked list data structure in C++. The implementation provides a robust foundation for linked list operations with comprehensive memory management.
 
 ## Overview
 
-The custom stack is a container adapter that provides a LIFO (Last-In-First-Out) data structure. Key features include:
+The custom linked list is implemented through a Node class template that supports bidirectional linking. Key features include:
 
 - Template-based implementation supporting any data type
-- Customizable underlying container (defaults to custom::vector)
-- LIFO (Last-In-First-Out) data access pattern
-- Element access via top()
-- Push and pop operations
-- Size and empty status methods
+- Doubly-linked structure with previous and next pointers
+- Memory-efficient node management
+- Support for both copy and move semantics
+- Comprehensive node manipulation utilities
 
 ## Class Structure
 
-### `custom::stack<T, Container>`
-The main stack class template with two parameters:
-- T: Type of elements
-- Container: Underlying container type (default `custom::vector<T>`)
+### `Node<T>`
+The main node class template with one parameter:
+- T: Type of element stored in the node
 
-Key methods:
-- `top()`: Access next element
-- `push()`: Add element to top
-- `pop()`: Remove top element
-- `size()`, `empty()`: Container info
-- `swap()`: Exchange contents with another stack
+Key attributes:
+- `data`: The stored element
+- `pNext`: Pointer to the next node
+- `pPrev`: Pointer to the previous node
+
+## Node Operations
+
+The implementation includes several utility functions:
+
+### Core Operations
+- `insert()`: Insert a new node before/after a given position
+- `remove()`: Remove a node from the list
+- `copy()`: Deep copy a list
+- `assign()`: Copy values while reusing existing nodes
+- `clear()`: Delete all nodes in a list
+- `swap()`: Exchange two lists
+- `size()`: Count nodes in a list
+
+### Memory Management
+- Efficient node reuse in assignment operations
+- Proper cleanup of unused nodes
+- Prevention of memory leaks
 
 ## Usage Example
 
 ```cpp
-#include "stack.h"
+#include "node.h"
 
-// Create stack of integers
-custom::stack<int> s;
+// Create nodes with integers
+Node<int>* head = new Node<int>(1);
+insert(head, 2, true);  // Insert after
+insert(head, 0, false); // Insert before
 
-// Add elements
-s.push(1);
-s.push(2);
+// Copy a list
+Node<int>* newList = copy(head);
 
-// Access elements
-int top = s.top();
-
-// Remove elements
-s.pop();
+// Clean up
+clear(head);
+clear(newList);
 ```
 
 ## Testing
 
-The implementation includes comprehensive unit tests in `testStack.h` that verify:
-- Element access operations
-- Push/pop operations
+The implementation includes comprehensive unit tests in `testNode.h` that verify:
+- Node creation and deletion
+- Insert and remove operations
+- Copy and assignment operations
 - Memory management
 - Edge cases
 
-Run tests by building in debug mode with the DEBUG flag defined.
-
 ## Files
 
-- `stack.h`: Main stack implementation
-- `testStack.h`: Unit tests
-- `spy.h`: Helper class for testing
+- `node.h`: Main node implementation with utility functions
+- `testNode.h`: Unit tests
 - `unitTest.h`: Unit testing framework
-- `vector.h`: Custom vector implementation used by stack
 
 ## Building
 
-The project includes Visual Studio solution files for building on Windows. Open `LabStack.sln` and build using Visual Studio 2019 or later.
+The project includes Visual Studio solution files for building on Windows. Open `LabLinkedList.sln` and build using Visual Studio 2019 or later.
 
 ## Notes
 
-- This is an educational implementation focused on demonstrating STL container concepts
-- The implementation aims to match `std::stack`'s interface and performance
-- The stack is implemented as a container adapter, using a custom vector as its default underlying container
-
-#### Disclaimer
-
-This README was initially generated using an AI Language Model (Claude 3.5 Sonnet) and subsequently edited by a human for accuracy and completeness. While the content accurately describes the codebase, the writing structure and initial draft were AI-assisted. The actual code implementation and testing were completed by human developers.
+- This is an educational implementation focused on demonstrating linked list concepts
+- The implementation provides a foundation for more complex data structures
+- Special attention is paid to memory management and edge cases
+- The node structure supports both forward and backward traversal
 
 ## License
 
